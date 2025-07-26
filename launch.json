@@ -1,0 +1,46 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Flask App (Development)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [],
+            "jinja": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Flask App (Production)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "FLASK_ENV": "production",
+                "FLASK_DEBUG": "0"
+            },
+            "args": [],
+            "jinja": true,
+            "justMyCode": true
+        },
+        {
+            "name": "Desktop App",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/desktop_app.py",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}",
+            "env": {},
+            "args": [],
+            "justMyCode": true
+        }
+    ]
+} 

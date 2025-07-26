@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  # Main application
+  inventory-app:
+    build: .
+    container_name: convex-inventory
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=${SECRET_KEY:-your-secret-key-here}
+      - DATABASE_PATH=/app/data/inventory.db
+      - ENABLE_AUDIT_TRAIL=true
+      - ENABLE_AUTH=false
+      - ENABLE_API=false
+      - ENABLE_ANALYTICS=false
+      - ENABLE_BARCODES=false
+    volumes:
+      - ./data:/app/data
+      - ./uploads:/app/uploads
+      - ./backups:/app/backups
+      - ./logs:/app/logs
+      - ./static:/app/static
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - inventory-network
+
+  # Nginx reverse proxy (optional)
+  nginx:
+    image: nginx:alpine
+    container_name: inventory-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - inventory-app
+    restart: unless-stopped
+    networks:
+      - inventory-network
+    profiles:
+      - production
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:alpine
+    container_name: inventory-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - inventory-network
+    profiles:
+      - production
+
+  # PostgreSQL for production database (optional)
+  postgres:
+    image: postgres:13-alpine
+    container_name: inventory-postgres
+    environment:
+      - POSTGRES_DB=inventory
+      - POSTGRES_USER=inventory_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-inventory_password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - inventory-network
+    profiles:
+      - production
+
+volumes:
+  redis-data:
+  postgres-data:
+
+networks:
+  inventory-network:
+    driver: bridge 

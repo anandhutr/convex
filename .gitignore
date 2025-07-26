@@ -1,0 +1,26 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+
+# macOS
+.DS_Store
+._*
+
+# Editor
+.vscode/
+
+# App data
+backups/
+logs/
+uploads/
+
+# Database
+*.db
+
+# Ignore launch configs
+launch.json 
